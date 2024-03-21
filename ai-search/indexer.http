@@ -1,0 +1,59 @@
+@apiKey = <api_key>
+@aiSearchName = <ai_search_name>
+@indexName = <index_name>
+@apiVersion = 2023-10-01-Preview
+
+
+### Create Index
+PUT https://{{aiSearchName}}.search.windows.net/indexes/{{indexName}}?api-version={{apiVersion}} HTTP/1.1
+content-type: application/json
+api-key: {{apiKey}}
+
+{
+  "name": "{{indexName}}",
+  "fields": [
+    {
+      "name": "id",
+      "type": "Edm.String",
+      "key": true,
+      "filterable": true,
+      "analyzer": "keyword"
+    },
+    {
+      "name": "content",
+      "type": "Edm.String",
+      "searchable": true,
+      "filterable": true,
+      "sortable": true,
+      "retrievable": true
+    },
+    {
+      "name": "content_vector",
+      "type": "Collection(Edm.Single)",
+      "searchable": true,
+      "retrievable": true,
+      "dimensions": 1536,
+      "vectorSearchProfile": "vector-profile"
+    }
+  ],
+  "vectorSearch": {
+    "algorithms": [
+      {
+        "name": "hnsw-config",
+        "kind": "hnsw",
+        "hnswParameters": {
+          "m": 4,
+          "efConstruction": 400,
+          "efSearch": 500,
+          "metric": "cosine"
+        }
+      }
+    ],
+    "profiles": [
+      {
+        "name": "vector-profile",
+        "algorithm": "hnsw-config"
+      }
+    ]
+  }
+}

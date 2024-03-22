@@ -1,16 +1,19 @@
-@apiKey = <api_key>
-@aiSearchName = <ai_search_name>
-@indexName = <index_name>
-@apiVersion = 2023-10-01-Preview
+@api_key = <api_key>
+@ai_search_same = <ai_search_name>
+@index_name = <index_name>
+@api_version = 2023-10-01-Preview
+@open_ai_endpoint = <open_ai_endpoint>
+@open_ai_model = <open_ai_model>
+@open_ai_key = <open_ai_key>
 
 
 ### Create Index
-PUT https://{{aiSearchName}}.search.windows.net/indexes/{{indexName}}?api-version={{apiVersion}} HTTP/1.1
+PUT https://{{ai_search_same}}.search.windows.net/indexes/{{index_name}}?api-version={{api_version}} HTTP/1.1
 content-type: application/json
-api-key: {{apiKey}}
+api-key: {{api_key}}
 
-{
-  "name": "{{indexName}}",
+{   
+  "name": "{{index_name}}",
   "fields": [
     {
       "name": "id",
@@ -49,10 +52,22 @@ api-key: {{apiKey}}
         }
       }
     ],
+    "vectorizers": [
+      {
+        "name": "ada_vectorizer",
+        "kind": "azureOpenAI",
+        "azureOpenAIParameters": {
+          "resourceUri": "{{open_ai_endpoint}}",
+          "deploymentId": "{{open_ai_model}}",
+          "apiKey": "{{open_ai_key}}"
+        }
+      }
+    ],
     "profiles": [
       {
         "name": "vector-profile",
-        "algorithm": "hnsw-config"
+        "algorithm": "hnsw-config",
+        "vectorizer": "ada_vectorizer"
       }
     ]
   }
